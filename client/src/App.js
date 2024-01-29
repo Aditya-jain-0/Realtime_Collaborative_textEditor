@@ -1,32 +1,33 @@
-import './App.css';
+import React from 'react'
+import {BrowserRouter,Route,Routes} from 'react-router-dom'
+import Home from './pages/Home'
 import {Toaster} from 'react-hot-toast'
-import  {BrowserRouter,Routes,Route} from 'react-router-dom'
-import Editorpage from './Pages/Editorpage'
-import Home from './Pages/Home'
+import EditorPage from './pages/EditorPage'
+import './App.css'
 
-function App() {
+const App = () => {
   return (
     <>
-    <div>
-        <Toaster
-            position="top-center"
-            toastOptions={{
-                success: {
-                    theme: {
-                        primary: '#4aed88',
-                    },
-                },
-            }}
-        ></Toaster>
-    </div>
-    <BrowserRouter>
+      <div>
+          <Toaster
+              position="top-center"
+              toastOptions={{
+                  success: {
+                      theme: {
+                          primary: '#4aed88',
+                      },
+                  },
+              }}
+          ></Toaster>
+      </div>      
+      <BrowserRouter>
         <Routes>
-            <Route path='/' element={<Home/>}></Route>
-            <Route path='/:username/:roomId' element={<Editorpage/>}></Route>
+          <Route path='/' element={<Home/>}></Route>
+          <Route path='/editor/:roomId' element={<EditorPage/>}></Route>
         </Routes>
-    </BrowserRouter>
+      </BrowserRouter>
     </>
-  );
+  )
 }
 
-export default App;
+export default App

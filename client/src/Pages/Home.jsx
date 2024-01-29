@@ -1,60 +1,59 @@
-import React,{useState} from 'react'
-import { toast } from 'react-hot-toast'
-import { useNavigate } from 'react-router-dom'
+import {React, useState } from 'react'
 import {v4} from 'uuid'
+import toast from 'react-hot-toast'
+import {useNavigate} from 'react-router-dom'
 
 const Home = () => {
-  const navigator = useNavigate()
-  const [name, setname] = useState('')
-  const [roomid, setroomid] = useState('')
 
-  const createRoom = (e)=>{ 
+  const [roomId, setroomId] = useState('')
+  const [username, setusername] = useState('')
+  const navigate = useNavigate()
+
+  const createnewroom = (e)=>{
     e.preventDefault();
     const id = v4();
-    setroomid(id);
+    setroomId(id)
+    toast.success('new room created')
   }
-  const handlekey = (e)=>{
-    if(e.code === 'Enter'){
-      joinRoom()
+
+  const joinroom = ()=>{
+    if(!roomId || !username){
+      toast.error('Empty Fields ☹️')
+      return 
     }
+    navigate(`/editor/${roomId}`,{
+      state:{
+        username,
+      }
+    })
   }
-  const joinRoom = ()=>{
-      if(!name && !roomid){
-        toast.error('Empty Fields ☹️')
-        return;
-      }
-      else if(!name){
-        toast.error('Empty Name ☹️')
-        return;
-      }
-      else if(!roomid){
-        toast.error('Empty Room ID ☹️')
-        return;
-      }else{
-        navigator(`/${name}/${roomid}`)
-        return;
-      }
-  }  
+
   return (
-    <>
-    <h1>Collaborative Text Editor</h1>
-    Enter Name<input 
-        type='text'
-        placeholder='Enter your name'
-        onChange={(e)=>setname(e.target.value)}
-        value={name}
-        onKeyUp={handlekey}
-    /><br/>
-    Room ID : <input
-        type='text'
-        placeholder='Enter room Id'
-        value={roomid}
-        onChange={(e)=>setroomid(e.target.value)}
-        onKeyUp={handlekey}
-      /><br/>
-      <button onClick={createRoom}>Create New Room</button>
-      &nbsp;<button onClick={joinRoom}>JoinRoom</button>
-    </>
+    <div className='homePageWrapper'>
+        <div className='formWrapper'>
+            <h1>Collab Text</h1>
+           <div className='inputGrp'>
+              Username - <input 
+              type='text' 
+              className='inputBox'
+              placeholder='Enter Username'
+              value={username} 
+              onChange={(e)=>setusername(e.target.value)}
+              />
+             
+              Room ID - <input 
+              type='text' 
+              value={roomId} 
+              onChange={(e)=>setroomId(e.target.value)}
+              className='inputBox'
+               placeholder='Enter Room ID'
+              />
+
+              <button className='btn' onClick={joinroom}>Join</button>
+              <span className='createInfo'>Generate <button className='btn ' onClick={createnewroom}>New Room ID</button></span>
+           </div>
+        </div>
+    </div>
   )
 }
 

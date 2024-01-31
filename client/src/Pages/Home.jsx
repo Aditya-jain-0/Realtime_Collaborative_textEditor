@@ -31,7 +31,7 @@ const Home = () => {
   return (
     <div className='homePageWrapper'>
         <div className='formWrapper'>
-            <h1>Collab Text</h1>
+            <h1>Realtime Collaborative Text editor</h1>
            <div className='inputGrp'>
               Username - <input 
               type='text' 

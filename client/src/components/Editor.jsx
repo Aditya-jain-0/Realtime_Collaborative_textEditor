@@ -6,7 +6,7 @@ import 'codemirror/theme/material-ocean.css'
 import 'codemirror/addon/edit/closetag'
 import 'codemirror/addon/edit/closebrackets'
 
-const Editor = ({socketRef}) => {
+const Editor = ({socketRef,roomId,onCodeChange}) => {
 
   const editorRef = useRef(null);
 
@@ -22,19 +22,39 @@ const Editor = ({socketRef}) => {
 
       // 'change' codemirror event 
       editorRef.current.on('change',(instance,changes)=>{
-          // console.log('changes ',changes)  // input
+          // console.log('changes ',changes)  // input from our side
           const {origin} = changes
           const code = instance.getValue();   //editor content 
-          
+          onCodeChange(code)
+          if(origin!=='setValue'){
+            //reflecting code to other connected clientsx
+            socketRef.current.emit('code-change',{
+              roomId,
+              code
+            })
+          }
 
-          console.log(code)
+          // console.log(code)
       })
-
-      // editorRef.current.setValue('')
-
     }
     init()
   },[])
+
+  useEffect(()=>{   //E
+  if(socketRef.current){
+    socketRef.current.on('code-change',({code})=>{
+      if(code!==null){
+        editorRef.current.setValue(code)
+      }
+    })
+  }
+
+  return ()=>{
+    socketRef.current.off('code-change')
+  }
+
+  },[socketRef.current])
+
   return (
     <textarea id='rteditor'></textarea>
     // <textarea id='rteditor' rows="35" cols = "125"></textarea>

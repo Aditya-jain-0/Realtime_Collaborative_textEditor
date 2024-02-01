@@ -39,6 +39,17 @@ io.on('connection',(socket)=>{
             })
         })
     })
+
+    socket.on('code-change',({roomId,code})=>{    
+        // io.to(roomId).emit('code-change',{code});  //E
+        socket.in(roomId).emit('code-change',{code});
+    })
+
+    socket.on('sync-code',({code,socketId})=>{    
+        // io.to(roomId).emit('code-change',{code});  //E
+        io.to(socketId).emit('code-change',{code});
+    })
+
     //event before socket completely disconnecting (terminate browser, shift to another tab)
     socket.on('disconnecting',()=>{
         const rooms = [...socket.rooms];

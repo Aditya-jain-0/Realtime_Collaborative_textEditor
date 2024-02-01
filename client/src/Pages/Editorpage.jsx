@@ -8,6 +8,7 @@ import {toast} from 'react-hot-toast'
 const EditorPage = () => {
 
   const socketRef = useRef(null);
+  const codeRef = useRef(null)
   const location = useLocation();
   const reactnavigate = useNavigate();
   const {roomId }= useParams()
@@ -39,6 +40,10 @@ const EditorPage = () => {
           console.log(`${username} joined`)
         }
         setClients(clients)
+        socketRef.current.emit('sync-code',{
+          code : codeRef.current,
+          socketId,
+        })
       })
 
       socketRef.current.on('disconnected',({socketId,username})=>{
@@ -63,6 +68,20 @@ const EditorPage = () => {
 
   },[])
 
+  const copyroomId = async()=>{
+    try {
+      await navigator.clipboard.writeText(roomId)
+      toast.success('RoomId Copied!')
+    } catch (error) {
+      console.log(error)
+      toast.error('Error while Copying ')
+    }
+  }
+
+  const leaveroom = ()=>{
+    reactnavigate('/')
+  }
+
   if(!location.state){
     return <Navigate to="/"/>
   }
@@ -83,11 +102,17 @@ const EditorPage = () => {
           </div>  
        </div>
       <div className='editorWrap'>
-          <Editor socketRef = {socketRef}/>
+          <Editor 
+          socketRef = {socketRef}
+          roomId = {roomId}
+          onCodeChange = {(code)=>{
+            codeRef.current = code;
+          }}          
+          />
        </div>
       <div className='memWrapbtn'>
-      <button>Copy room Id</button>
-      <button>Leave</button>
+      <button onClick={copyroomId}>Copy room Id</button>
+      <button onClick={leaveroom}>Leave</button>
       </div>
     </div>
   )

@@ -13,7 +13,11 @@ const EditorPage = () => {
   const reactnavigate = useNavigate();
   const {roomId }= useParams()
   const [clients, setClients] = useState([])
+  const [opt, setopt] = useState("")
 
+  const clroptscreen = ()=>{
+      setopt("")
+  }
 
   useEffect(()=>{
     const init = async() =>{
@@ -82,12 +86,14 @@ const EditorPage = () => {
     reactnavigate('/')
   }
 
+
   if(!location.state){
     return <Navigate to="/"/>
   }
 
   return (
     <div className='mainWrap'>
+      <div className='left-container'>
       <div className='memWrap'>
           <div className='memWrapinner'>
             <h3 className='EditorHeading'>Collaborators</h3>  
@@ -113,6 +119,19 @@ const EditorPage = () => {
       <div className='memWrapbtn'>
       <button onClick={copyroomId}>Copy room Id</button>
       <button onClick={leaveroom}>Leave</button>
+      <button className = 'runbtn' onClick={runcodefn}>Run</button>
+      </div>
+      </div>
+      <div className='right-container'>
+        <div className='input-area'>
+          <h4>Input :- </h4>
+          <textarea></textarea>          
+        </div>
+        <div className='output-area'>
+          <h4>Output :- </h4>
+          <div className='output'>{opt}</div>    
+          <button className='clrbtn' onClick={clroptscreen}>Clear</button>      
+        </div>
       </div>
     </div>
   )

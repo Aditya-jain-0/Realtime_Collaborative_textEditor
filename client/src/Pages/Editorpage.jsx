@@ -14,10 +14,24 @@ const EditorPage = () => {
   const {roomId }= useParams()
   const [clients, setClients] = useState([])
   const [opt, setopt] = useState("")
+  const [inp, setinp] = useState("")
 
   const clroptscreen = ()=>{
       setopt("")
   }
+
+  const runcodefn = async() =>{
+    socketRef.current.emit('compile-code',{
+        code : codeRef.current,
+        input : inp
+    })
+    socketRef.current.on('compile-code',({outpt})=>{
+      if(outpt){
+        setopt(outpt);
+      }
+    })
+  }
+
 
   useEffect(()=>{
     const init = async() =>{
@@ -86,7 +100,6 @@ const EditorPage = () => {
     reactnavigate('/')
   }
 
-
   if(!location.state){
     return <Navigate to="/"/>
   }
@@ -125,7 +138,7 @@ const EditorPage = () => {
       <div className='right-container'>
         <div className='input-area'>
           <h4>Input :- </h4>
-          <textarea></textarea>          
+          <textarea value={inp} onChange={(e)=>setinp(e.target.value)}></textarea>          
         </div>
         <div className='output-area'>
           <h4>Output :- </h4>

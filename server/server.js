@@ -2,10 +2,17 @@ const express = require('express')
 const app = express();
 const http = require('http')
 const {Server} = require('socket.io')
-require('dotenv').config()
+const cors = require('cors')
 
 const server = http.createServer(app)
 const io = new Server(server)
+require('dotenv').config()
+
+const compiler = require('compilex')
+var options = {stats : true}; //prints stats on console 
+compiler.init(options);
+
+app.use(cors());
 
 const userSocketMap = {}
 
@@ -44,6 +51,22 @@ io.on('connection',(socket)=>{
         // io.to(roomId).emit('code-change',{code});  //E
         socket.in(roomId).emit('code-change',{code});
     })
+   
+    socket.on('compile-code',({code,input})=>{  
+        if(input){
+        var envData = { OS : "windows"}; 
+        compiler.compilePythonWithInput( envData , code , input , function(data){
+            const outpt = data.output;
+            socket.emit('compile-code',{outpt})
+        });
+        }else{
+         var envData = { OS : "windows"}; 
+         compiler.compilePython( envData , code , function(data){
+             const outpt = data.output;
+             socket.emit('compile-code',{outpt})
+         }); 
+        }
+    })
 
     socket.on('sync-code',({code,socketId})=>{    
         // io.to(roomId).emit('code-change',{code});  //E
@@ -63,6 +86,7 @@ io.on('connection',(socket)=>{
         socket.leave();
     })
 })  
+
 
 const PORT = process.env.PORT || 8000
 server.listen(PORT,()=>{
